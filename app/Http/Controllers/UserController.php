@@ -8,6 +8,8 @@ use App\Models\Currency;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use App\Services\Rates;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UserCollection;
 
 class UserController extends Controller
 {
@@ -26,7 +28,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json(User::all());
+        return new UserCollection(User::all());
     }
 
 
@@ -49,7 +51,7 @@ class UserController extends Controller
 
         if ($result) {
             $user->refresh();
-            return response()->json([$user], 201);
+            return response(new UserResource($user), 201);
         } else {
             return response()->json(['Error', 500]);
         }
@@ -62,12 +64,12 @@ class UserController extends Controller
      */
     public function show(string $id, string $conversion_iso = null)
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
         $conversion_iso = strtoupper($conversion_iso);
 
         //no currency supplied OR matches - just return user's default rate
         if (!$conversion_iso || $conversion_iso === $user->currency_iso) {
-            return response()->json([$user]);
+            return new UserResource($user);
         }
 
         //convert user rate details
@@ -75,7 +77,7 @@ class UserController extends Controller
             $user->rate_hour = $this->convertRate($user->rate_hour, $user->currency_iso, $conversion_iso);
             $user->currency_iso = $conversion_iso;
 
-            return response()->json([$user]);
+            return new UserResource($user);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getCode(), 'message' => $e->getMessage()]);
         }
@@ -99,7 +101,7 @@ class UserController extends Controller
 
         if ($result) {
             $user->refresh();
-            return response()->json([$user], 200);
+            return response(new UserResource($user), 200);
         } else {
             return response()->json(['Error', 500]);
         }

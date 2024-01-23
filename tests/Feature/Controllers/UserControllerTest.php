@@ -18,15 +18,14 @@ class UserControllerTest extends TestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(
                 [
-                    '*' => [
-                        'id',
-                        'name',
-                        'email',
-                        'email_verified_at',
-                        'created_at',
-                        'updated_at',
-                        'rate_hour',
-                        'currency_iso'
+                    'data' => [
+                        '*' => [
+                            'id',
+                            'name',
+                            'email',
+                            'rate_hour',
+                            'currency_iso'
+                        ]
                     ]
                 ]
             );
@@ -45,16 +44,11 @@ class UserControllerTest extends TestCase
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure(
                 [
-                    [
-                        'id',
-                        'name',
-                        'email',
-                        'email_verified_at',
-                        'created_at',
-                        'updated_at',
-                        'rate_hour',
-                        'currency_iso'
-                    ]
+                    'id',
+                    'name',
+                    'email',
+                    'rate_hour',
+                    'currency_iso'
                 ]
             );
         $this->assertDatabaseHas('users', $payload);
@@ -74,13 +68,10 @@ class UserControllerTest extends TestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson(
                 [
-                    [
+                    'data' => [
                         'id' => $user->id,
                         'name' => $user->name,
                         'email' => $user->email,
-                        'email_verified_at' => $user->email_verified_at,
-                        'created_at' => $user->created_at,
-                        'updated_at' => $user->updated_at,
                         'rate_hour' => $user->rate_hour,
                         'currency_iso' => $user->currency_iso
                     ]
@@ -105,16 +96,11 @@ class UserControllerTest extends TestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson(
                 [
-                    [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'email_verified_at' => $user->email_verified_at,
-                        'created_at' => $user->created_at,
-                        'updated_at' => $user->updated_at,
-                        'rate_hour' => 75,
-                        'currency_iso' => $user->currency_iso
-                    ]
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'rate_hour' => 75,
+                    'currency_iso' => $user->currency_iso
                 ]
             );
     }
@@ -150,15 +136,14 @@ class UserControllerTest extends TestCase
         $this->json('get', 'api/users/' . $user->id . '/USD')
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
-                [
+                'data' => [
                     'currency_iso' => 'USD'
                 ]
             ])
             ->assertJsonMissing([
-                [
+                'data' => [
                     'rate_hour' => 100
                 ]
             ]);
     }
-
 }

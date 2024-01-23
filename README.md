@@ -61,6 +61,10 @@ add currency ISO code to the end of the url (GBP, USD, EUR) e.g. `http://127.0.0
 The local and api exchange rate drivers are driven by services in the `App\Services` directory and registered in AppServiceProvider.  `RatesLocal`
 and `RatesExchangeratesapi` both implement the `Rates` interface to provide a service to retrieve the exhange rates of a base currency into an exhange rate.
 
+## API Resources
+There is a resource route in the `api.php` routes file and resource controller (index,store,show,update,destroy) to route standard CRUD endpoints to the controller with
+minimal bloat to the routes file. The GET route is overriden, so that an extra optional parameter can be passed to show a user with converted rate. `UserResource` and `UserCollection` resource files have been created to define the structure of JSON responses for the User model.
+
 ### Schema
 * The default `Users` table in laravel has been extended to include `rate_hour` and `currency_iso` to store user rate information.
 * The `Currencies` table stores the currencies that the app can work with, ensuring only they can be applied to a user
